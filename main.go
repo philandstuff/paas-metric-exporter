@@ -10,7 +10,6 @@ import (
 	"github.com/alphagov/paas-metric-exporter/senders"
 	"github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
-	quipo_statsd "github.com/quipo/statsd"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -73,8 +72,8 @@ func main() {
 
 	var sender senders.Sender
 	if !*debug {
-		statsdSender := quipo_statsd.NewStatsdClient(*statsdEndpoint, *statsdPrefix)
-		statsdSender.CreateSocket()
+		statsdSender := senders.NewStatsdSender(*statsdEndpoint, *statsdPrefix)
+		statsdSender.Start()
 		sender = statsdSender
 	} else {
 		sender = senders.DebugClient{Prefix: *statsdPrefix}
