@@ -8,7 +8,6 @@ import (
 	"github.com/alphagov/paas-metric-exporter/app"
 	"github.com/alphagov/paas-metric-exporter/processors"
 	"github.com/alphagov/paas-metric-exporter/senders"
-	"github.com/alphagov/paas-metric-exporter/statsd"
 	"github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
 	quipo_statsd "github.com/quipo/statsd"
@@ -78,7 +77,7 @@ func main() {
 		statsdSender.CreateSocket()
 		sender = statsdSender
 	} else {
-		sender = statsd.DebugClient{Prefix: *statsdPrefix}
+		sender = senders.DebugClient{Prefix: *statsdPrefix}
 	}
 
 	app := app.NewApplication(config, processors, sender)
