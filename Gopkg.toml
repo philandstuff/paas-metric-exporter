@@ -43,6 +43,9 @@
   name = "github.com/onsi/gomega"
 
 [[constraint]]
+  name = "github.com/prometheus/client_golang/prometheus"
+
+[[constraint]]
   name = "github.com/quipo/statsd"
 
 [[constraint]]

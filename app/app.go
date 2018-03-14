@@ -2,6 +2,8 @@ package app
 
 import (
 	"log"
+  "net/http"
+  "os"
 	"strings"
 	"time"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/alphagov/paas-metric-exporter/processors"
 	cfclient "github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Config is the application configuration
@@ -75,8 +78,13 @@ func (a *Application) enabled(name string) bool {
 
 // Run starts the application
 func (a *Application) Run() {
-	log.Println("Starting")
+	log.Println("Starting EventFetcher")
 	go a.runEventFetcher()
+
+  port := os.Getenv("PORT")
+	log.Println("Starting Prometheus on port " + port)
+  http.Handle("/metrics", promhttp.Handler())
+  go log.Fatal(http.ListenAndServe(":" + port, nil))
 
 	for {
 		select {
