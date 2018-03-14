@@ -12,6 +12,7 @@ import (
 	"github.com/alphagov/paas-metric-exporter/processors"
 	cfclient "github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
+  "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -80,6 +81,22 @@ func (a *Application) enabled(name string) bool {
 func (a *Application) Run() {
 	log.Println("Starting EventFetcher")
 	go a.runEventFetcher()
+
+  // Register a Prometheus counter
+  counter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "my_counter",
+    Help: "something",
+    ConstLabels: prometheus.Labels{"my_label": "some value"},
+	})
+  prometheus.MustRegister(counter)
+
+  go func() {
+    for {
+      log.Println("incrementing")
+      counter.Inc()
+			time.Sleep(time.Duration(1000) * time.Millisecond)
+		}
+  }()
 
   port := os.Getenv("PORT")
 	log.Println("Starting Prometheus on port " + port)
