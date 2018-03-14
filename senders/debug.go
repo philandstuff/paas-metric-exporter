@@ -9,6 +9,8 @@ type DebugClient struct {
 	Prefix string
 }
 
+var _ Sender = DebugClient{}
+
 func (d DebugClient) Gauge(stat string, value int64) error {
 	log.Printf("gauge %s %d\n", d.Prefix+stat, value)
 	return nil
