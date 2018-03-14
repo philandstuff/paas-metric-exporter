@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/alphagov/paas-metric-exporter/metrics"
+	"github.com/alphagov/paas-metric-exporter/senders"
 )
 
 type FakeSender struct {
@@ -350,4 +350,4 @@ func (fake *FakeSender) recordInvocation(key string, args []interface{}) {
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ metrics.Sender = new(FakeSender)
+var _ senders.Sender = new(FakeSender)

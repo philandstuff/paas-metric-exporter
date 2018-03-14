@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/alphagov/paas-metric-exporter/app"
-	"github.com/alphagov/paas-metric-exporter/metrics"
 	"github.com/alphagov/paas-metric-exporter/processors"
+	"github.com/alphagov/paas-metric-exporter/senders"
 	"github.com/alphagov/paas-metric-exporter/statsd"
 	"github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
@@ -72,7 +72,7 @@ func main() {
 		sonde_events.Envelope_HttpStartStop:   &processors.HttpStartStopProcessor{},
 	}
 
-	var sender metrics.Sender
+	var sender senders.Sender
 	if !*debug {
 		statsdSender := quipo_statsd.NewStatsdClient(*statsdEndpoint, *statsdPrefix)
 		statsdSender.CreateSocket()

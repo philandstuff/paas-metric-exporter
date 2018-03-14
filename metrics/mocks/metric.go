@@ -5,13 +5,14 @@ import (
 	"sync"
 
 	"github.com/alphagov/paas-metric-exporter/metrics"
+	"github.com/alphagov/paas-metric-exporter/senders"
 )
 
 type FakeMetric struct {
-	SendStub        func(sender metrics.Sender, template string) error
+	SendStub        func(sender senders.Sender, template string) error
 	sendMutex       sync.RWMutex
 	sendArgsForCall []struct {
-		sender   metrics.Sender
+		sender   senders.Sender
 		template string
 	}
 	sendReturns struct {
@@ -33,11 +34,11 @@ type FakeMetric struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeMetric) Send(sender metrics.Sender, template string) error {
+func (fake *FakeMetric) Send(sender senders.Sender, template string) error {
 	fake.sendMutex.Lock()
 	ret, specificReturn := fake.sendReturnsOnCall[len(fake.sendArgsForCall)]
 	fake.sendArgsForCall = append(fake.sendArgsForCall, struct {
-		sender   metrics.Sender
+		sender   senders.Sender
 		template string
 	}{sender, template})
 	fake.recordInvocation("Send", []interface{}{sender, template})
@@ -57,7 +58,7 @@ func (fake *FakeMetric) SendCallCount() int {
 	return len(fake.sendArgsForCall)
 }
 
-func (fake *FakeMetric) SendArgsForCall(i int) (metrics.Sender, string) {
+func (fake *FakeMetric) SendArgsForCall(i int) (senders.Sender, string) {
 	fake.sendMutex.RLock()
 	defer fake.sendMutex.RUnlock()
 	return fake.sendArgsForCall[i].sender, fake.sendArgsForCall[i].template

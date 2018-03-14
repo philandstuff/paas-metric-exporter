@@ -2,6 +2,8 @@ package metrics
 
 import (
 	"time"
+
+	"github.com/alphagov/paas-metric-exporter/senders"
 )
 
 var _ Metric = CounterMetric{}
@@ -10,18 +12,9 @@ var _ Metric = FGaugeMetric{}
 var _ Metric = TimingMetric{}
 var _ Metric = PrecisionTimingMetric{}
 
-//go:generate counterfeiter -o mocks/sender.go . Sender
-type Sender interface {
-	Gauge(stat string, value int64) error
-	FGauge(stat string, value float64) error
-	Incr(stat string, count int64) error
-	Timing(string, int64) error
-	PrecisionTiming(stat string, delta time.Duration) error
-}
-
 //go:generate counterfeiter -o mocks/metric.go . Metric
 type Metric interface {
-	Send(sender Sender, template string) error
+	Send(sender senders.Sender, template string) error
 	Name() string
 }
 
@@ -42,7 +35,7 @@ func (m CounterMetric) Name() string {
 	return m.Metric
 }
 
-func (m CounterMetric) Send(sender Sender, tmpl string) error {
+func (m CounterMetric) Send(sender senders.Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
@@ -68,7 +61,7 @@ func (m GaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m GaugeMetric) Send(sender Sender, tmpl string) error {
+func (m GaugeMetric) Send(sender senders.Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
@@ -94,7 +87,7 @@ func (m FGaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m FGaugeMetric) Send(sender Sender, tmpl string) error {
+func (m FGaugeMetric) Send(sender senders.Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
@@ -120,7 +113,7 @@ func (m TimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m TimingMetric) Send(sender Sender, tmpl string) error {
+func (m TimingMetric) Send(sender senders.Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
@@ -146,7 +139,7 @@ func (m PrecisionTimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m PrecisionTimingMetric) Send(sender Sender, tmpl string) error {
+func (m PrecisionTimingMetric) Send(sender senders.Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/alphagov/paas-metric-exporter/events"
-	"github.com/alphagov/paas-metric-exporter/metrics"
 	"github.com/alphagov/paas-metric-exporter/processors"
+	"github.com/alphagov/paas-metric-exporter/senders"
 	cfclient "github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
 )
@@ -25,7 +25,7 @@ type Application struct {
 	config       *Config
 	processors   map[sonde_events.Envelope_EventType]processors.Processor
 	eventFetcher events.FetcherProcess
-	sender       metrics.Sender
+	sender       senders.Sender
 	appEventChan chan *events.AppEvent
 	errorChan    chan error
 	exitChan     chan bool
@@ -35,7 +35,7 @@ type Application struct {
 func NewApplication(
 	config *Config,
 	processors map[sonde_events.Envelope_EventType]processors.Processor,
-	sender metrics.Sender,
+	sender senders.Sender,
 ) *Application {
 	eventTypes := make([]sonde_events.Envelope_EventType, 0, len(processors))
 	for eventType := range processors {
