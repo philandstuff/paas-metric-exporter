@@ -8,7 +8,7 @@ import (
 	"github.com/alphagov/paas-metric-exporter/metrics"
 )
 
-type FakeStatsdClient struct {
+type FakeSender struct {
 	GaugeStub        func(stat string, value int64) error
 	gaugeMutex       sync.RWMutex
 	gaugeArgsForCall []struct {
@@ -73,7 +73,7 @@ type FakeStatsdClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeStatsdClient) Gauge(stat string, value int64) error {
+func (fake *FakeSender) Gauge(stat string, value int64) error {
 	fake.gaugeMutex.Lock()
 	ret, specificReturn := fake.gaugeReturnsOnCall[len(fake.gaugeArgsForCall)]
 	fake.gaugeArgsForCall = append(fake.gaugeArgsForCall, struct {
@@ -91,26 +91,26 @@ func (fake *FakeStatsdClient) Gauge(stat string, value int64) error {
 	return fake.gaugeReturns.result1
 }
 
-func (fake *FakeStatsdClient) GaugeCallCount() int {
+func (fake *FakeSender) GaugeCallCount() int {
 	fake.gaugeMutex.RLock()
 	defer fake.gaugeMutex.RUnlock()
 	return len(fake.gaugeArgsForCall)
 }
 
-func (fake *FakeStatsdClient) GaugeArgsForCall(i int) (string, int64) {
+func (fake *FakeSender) GaugeArgsForCall(i int) (string, int64) {
 	fake.gaugeMutex.RLock()
 	defer fake.gaugeMutex.RUnlock()
 	return fake.gaugeArgsForCall[i].stat, fake.gaugeArgsForCall[i].value
 }
 
-func (fake *FakeStatsdClient) GaugeReturns(result1 error) {
+func (fake *FakeSender) GaugeReturns(result1 error) {
 	fake.GaugeStub = nil
 	fake.gaugeReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) GaugeReturnsOnCall(i int, result1 error) {
+func (fake *FakeSender) GaugeReturnsOnCall(i int, result1 error) {
 	fake.GaugeStub = nil
 	if fake.gaugeReturnsOnCall == nil {
 		fake.gaugeReturnsOnCall = make(map[int]struct {
@@ -122,7 +122,7 @@ func (fake *FakeStatsdClient) GaugeReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) FGauge(stat string, value float64) error {
+func (fake *FakeSender) FGauge(stat string, value float64) error {
 	fake.fGaugeMutex.Lock()
 	ret, specificReturn := fake.fGaugeReturnsOnCall[len(fake.fGaugeArgsForCall)]
 	fake.fGaugeArgsForCall = append(fake.fGaugeArgsForCall, struct {
@@ -140,26 +140,26 @@ func (fake *FakeStatsdClient) FGauge(stat string, value float64) error {
 	return fake.fGaugeReturns.result1
 }
 
-func (fake *FakeStatsdClient) FGaugeCallCount() int {
+func (fake *FakeSender) FGaugeCallCount() int {
 	fake.fGaugeMutex.RLock()
 	defer fake.fGaugeMutex.RUnlock()
 	return len(fake.fGaugeArgsForCall)
 }
 
-func (fake *FakeStatsdClient) FGaugeArgsForCall(i int) (string, float64) {
+func (fake *FakeSender) FGaugeArgsForCall(i int) (string, float64) {
 	fake.fGaugeMutex.RLock()
 	defer fake.fGaugeMutex.RUnlock()
 	return fake.fGaugeArgsForCall[i].stat, fake.fGaugeArgsForCall[i].value
 }
 
-func (fake *FakeStatsdClient) FGaugeReturns(result1 error) {
+func (fake *FakeSender) FGaugeReturns(result1 error) {
 	fake.FGaugeStub = nil
 	fake.fGaugeReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) FGaugeReturnsOnCall(i int, result1 error) {
+func (fake *FakeSender) FGaugeReturnsOnCall(i int, result1 error) {
 	fake.FGaugeStub = nil
 	if fake.fGaugeReturnsOnCall == nil {
 		fake.fGaugeReturnsOnCall = make(map[int]struct {
@@ -171,7 +171,7 @@ func (fake *FakeStatsdClient) FGaugeReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) Incr(stat string, count int64) error {
+func (fake *FakeSender) Incr(stat string, count int64) error {
 	fake.incrMutex.Lock()
 	ret, specificReturn := fake.incrReturnsOnCall[len(fake.incrArgsForCall)]
 	fake.incrArgsForCall = append(fake.incrArgsForCall, struct {
@@ -189,26 +189,26 @@ func (fake *FakeStatsdClient) Incr(stat string, count int64) error {
 	return fake.incrReturns.result1
 }
 
-func (fake *FakeStatsdClient) IncrCallCount() int {
+func (fake *FakeSender) IncrCallCount() int {
 	fake.incrMutex.RLock()
 	defer fake.incrMutex.RUnlock()
 	return len(fake.incrArgsForCall)
 }
 
-func (fake *FakeStatsdClient) IncrArgsForCall(i int) (string, int64) {
+func (fake *FakeSender) IncrArgsForCall(i int) (string, int64) {
 	fake.incrMutex.RLock()
 	defer fake.incrMutex.RUnlock()
 	return fake.incrArgsForCall[i].stat, fake.incrArgsForCall[i].count
 }
 
-func (fake *FakeStatsdClient) IncrReturns(result1 error) {
+func (fake *FakeSender) IncrReturns(result1 error) {
 	fake.IncrStub = nil
 	fake.incrReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) IncrReturnsOnCall(i int, result1 error) {
+func (fake *FakeSender) IncrReturnsOnCall(i int, result1 error) {
 	fake.IncrStub = nil
 	if fake.incrReturnsOnCall == nil {
 		fake.incrReturnsOnCall = make(map[int]struct {
@@ -220,7 +220,7 @@ func (fake *FakeStatsdClient) IncrReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) Timing(arg1 string, arg2 int64) error {
+func (fake *FakeSender) Timing(arg1 string, arg2 int64) error {
 	fake.timingMutex.Lock()
 	ret, specificReturn := fake.timingReturnsOnCall[len(fake.timingArgsForCall)]
 	fake.timingArgsForCall = append(fake.timingArgsForCall, struct {
@@ -238,26 +238,26 @@ func (fake *FakeStatsdClient) Timing(arg1 string, arg2 int64) error {
 	return fake.timingReturns.result1
 }
 
-func (fake *FakeStatsdClient) TimingCallCount() int {
+func (fake *FakeSender) TimingCallCount() int {
 	fake.timingMutex.RLock()
 	defer fake.timingMutex.RUnlock()
 	return len(fake.timingArgsForCall)
 }
 
-func (fake *FakeStatsdClient) TimingArgsForCall(i int) (string, int64) {
+func (fake *FakeSender) TimingArgsForCall(i int) (string, int64) {
 	fake.timingMutex.RLock()
 	defer fake.timingMutex.RUnlock()
 	return fake.timingArgsForCall[i].arg1, fake.timingArgsForCall[i].arg2
 }
 
-func (fake *FakeStatsdClient) TimingReturns(result1 error) {
+func (fake *FakeSender) TimingReturns(result1 error) {
 	fake.TimingStub = nil
 	fake.timingReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) TimingReturnsOnCall(i int, result1 error) {
+func (fake *FakeSender) TimingReturnsOnCall(i int, result1 error) {
 	fake.TimingStub = nil
 	if fake.timingReturnsOnCall == nil {
 		fake.timingReturnsOnCall = make(map[int]struct {
@@ -269,7 +269,7 @@ func (fake *FakeStatsdClient) TimingReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) PrecisionTiming(stat string, delta time.Duration) error {
+func (fake *FakeSender) PrecisionTiming(stat string, delta time.Duration) error {
 	fake.precisionTimingMutex.Lock()
 	ret, specificReturn := fake.precisionTimingReturnsOnCall[len(fake.precisionTimingArgsForCall)]
 	fake.precisionTimingArgsForCall = append(fake.precisionTimingArgsForCall, struct {
@@ -287,26 +287,26 @@ func (fake *FakeStatsdClient) PrecisionTiming(stat string, delta time.Duration) 
 	return fake.precisionTimingReturns.result1
 }
 
-func (fake *FakeStatsdClient) PrecisionTimingCallCount() int {
+func (fake *FakeSender) PrecisionTimingCallCount() int {
 	fake.precisionTimingMutex.RLock()
 	defer fake.precisionTimingMutex.RUnlock()
 	return len(fake.precisionTimingArgsForCall)
 }
 
-func (fake *FakeStatsdClient) PrecisionTimingArgsForCall(i int) (string, time.Duration) {
+func (fake *FakeSender) PrecisionTimingArgsForCall(i int) (string, time.Duration) {
 	fake.precisionTimingMutex.RLock()
 	defer fake.precisionTimingMutex.RUnlock()
 	return fake.precisionTimingArgsForCall[i].stat, fake.precisionTimingArgsForCall[i].delta
 }
 
-func (fake *FakeStatsdClient) PrecisionTimingReturns(result1 error) {
+func (fake *FakeSender) PrecisionTimingReturns(result1 error) {
 	fake.PrecisionTimingStub = nil
 	fake.precisionTimingReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) PrecisionTimingReturnsOnCall(i int, result1 error) {
+func (fake *FakeSender) PrecisionTimingReturnsOnCall(i int, result1 error) {
 	fake.PrecisionTimingStub = nil
 	if fake.precisionTimingReturnsOnCall == nil {
 		fake.precisionTimingReturnsOnCall = make(map[int]struct {
@@ -318,7 +318,7 @@ func (fake *FakeStatsdClient) PrecisionTimingReturnsOnCall(i int, result1 error)
 	}{result1}
 }
 
-func (fake *FakeStatsdClient) Invocations() map[string][][]interface{} {
+func (fake *FakeSender) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.gaugeMutex.RLock()
@@ -338,7 +338,7 @@ func (fake *FakeStatsdClient) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *FakeStatsdClient) recordInvocation(key string, args []interface{}) {
+func (fake *FakeSender) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -350,4 +350,4 @@ func (fake *FakeStatsdClient) recordInvocation(key string, args []interface{}) {
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ metrics.StatsdClient = new(FakeStatsdClient)
+var _ metrics.Sender = new(FakeSender)

@@ -72,7 +72,7 @@ func main() {
 		sonde_events.Envelope_HttpStartStop:   &processors.HttpStartStopProcessor{},
 	}
 
-	var sender metrics.StatsdClient
+	var sender metrics.Sender
 	if !*debug {
 		statsdSender := quipo_statsd.NewStatsdClient(*statsdEndpoint, *statsdPrefix)
 		statsdSender.CreateSocket()

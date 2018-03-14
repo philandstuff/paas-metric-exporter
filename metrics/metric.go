@@ -10,8 +10,8 @@ var _ Metric = FGaugeMetric{}
 var _ Metric = TimingMetric{}
 var _ Metric = PrecisionTimingMetric{}
 
-//go:generate counterfeiter -o mocks/statsd_client.go . StatsdClient
-type StatsdClient interface {
+//go:generate counterfeiter -o mocks/sender.go . Sender
+type Sender interface {
 	Gauge(stat string, value int64) error
 	FGauge(stat string, value float64) error
 	Incr(stat string, count int64) error
@@ -21,7 +21,7 @@ type StatsdClient interface {
 
 //go:generate counterfeiter -o mocks/metric.go . Metric
 type Metric interface {
-	Send(sender StatsdClient, template string) error
+	Send(sender Sender, template string) error
 	Name() string
 }
 
@@ -42,13 +42,13 @@ func (m CounterMetric) Name() string {
 	return m.Metric
 }
 
-func (m CounterMetric) Send(statsdClient StatsdClient, tmpl string) error {
+func (m CounterMetric) Send(sender Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
 	}
 
-	return statsdClient.Incr(tmplName, m.Value)
+	return sender.Incr(tmplName, m.Value)
 }
 
 type GaugeMetric struct {
@@ -68,13 +68,13 @@ func (m GaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m GaugeMetric) Send(statsdClient StatsdClient, tmpl string) error {
+func (m GaugeMetric) Send(sender Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
 	}
 
-	return statsdClient.Gauge(tmplName, m.Value)
+	return sender.Gauge(tmplName, m.Value)
 }
 
 type FGaugeMetric struct {
@@ -94,13 +94,13 @@ func (m FGaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m FGaugeMetric) Send(statsdClient StatsdClient, tmpl string) error {
+func (m FGaugeMetric) Send(sender Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
 	}
 
-	return statsdClient.FGauge(tmplName, m.Value)
+	return sender.FGauge(tmplName, m.Value)
 }
 
 type TimingMetric struct {
@@ -120,13 +120,13 @@ func (m TimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m TimingMetric) Send(statsdClient StatsdClient, tmpl string) error {
+func (m TimingMetric) Send(sender Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
 	}
 
-	return statsdClient.Timing(tmplName, m.Value)
+	return sender.Timing(tmplName, m.Value)
 }
 
 type PrecisionTimingMetric struct {
@@ -146,11 +146,11 @@ func (m PrecisionTimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m PrecisionTimingMetric) Send(statsdClient StatsdClient, tmpl string) error {
+func (m PrecisionTimingMetric) Send(sender Sender, tmpl string) error {
 	tmplName, err := render(tmpl, m)
 	if err != nil {
 		return err
 	}
 
-	return statsdClient.PrecisionTiming(tmplName, m.Value)
+	return sender.PrecisionTiming(tmplName, m.Value)
 }
