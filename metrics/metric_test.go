@@ -124,12 +124,6 @@ var _ = Describe("Metric", func() {
 					Expect(fakeStatsdClient.stat).To(Equal("http.responsetimes.api_10_244_0_34_xip_io"))
 					Expect(fakeStatsdClient.precisionTimingValue).To(Equal(50 * time.Millisecond))
 				})
-
-                // TODO: move to presenter test
-				//It("should fail to parse template due to lack of dot", func() {
-				//	metric := PrecisionTimingMetric{Metric: "router__0.numCPUS", Value: 4}
-				//	Expect(metric.Send(fakeStatsdClient, "{{Metric}}")).NotTo(Succeed())
-				//})
 			})
 
 			Context("with prefix", func() {
@@ -154,12 +148,6 @@ var _ = Describe("Metric", func() {
 					Expect(fakeStatsdClient.stat).To(Equal("http.statuscodes.api_10_244_0_34_xip_io.200"))
 					Expect(fakeStatsdClient.value).To(Equal(int64(1)))
 				})
-
-                // TODO: move to presenter test
-				//It("should fail to parse template due to lack of dot", func() {
-				//	metric := CounterMetric{Metric: "router__0.numCPUS", Value: 4}
-				//	Expect(metric.Send(fakeStatsdClient, "{{Metric}}")).NotTo(Succeed())
-				//})
 			})
 
 			Context("with prefix", func() {
@@ -184,12 +172,6 @@ var _ = Describe("Metric", func() {
 					Expect(fakeStatsdClient.stat).To(Equal("router__0.numCPUS"))
 					Expect(fakeStatsdClient.value).To(Equal(int64(4)))
 				})
-
-                // TODO: move to presenter test
-				//It("should fail to parse template due to lack of dot", func() {
-				//	metric := GaugeMetric{Metric: "router__0.numCPUS", Value: 4}
-				//	Expect(metric.Send(fakeStatsdClient, "{{Metric}}")).NotTo(Succeed())
-				//})
 			})
 
 			Context("with prefix", func() {
@@ -243,12 +225,6 @@ var _ = Describe("Metric", func() {
 					Expect(fakeStatsdClient.stat).To(Equal("my.timing.metric"))
 					Expect(fakeStatsdClient.value).To(Equal(int64(100)))
 				})
-
-                // TODO: move to presenter test
-				//It("should fail to parse template due to lack of dot", func() {
-				//	metric := TimingMetric{Metric: "router__0.numCPUS", Value: 4}
-				//	Expect(metric.Send(fakeStatsdClient, "{{Metric}}")).NotTo(Succeed())
-				//})
 			})
 		})
 
@@ -275,12 +251,6 @@ var _ = Describe("Metric", func() {
 				metric := GaugeMetric{Metric: "router__0.numCPUS", Value: 4}
 				Expect(metric.Send(fakeStatsdClient, "")).To(Succeed())
 			})
-
-            // TODO: move to presenter test
-			//It("should fail to execute template due unknown property", func() {
-			//	metric := GaugeMetric{Metric: "router__0.numCPUS", Value: 4}
-			//	Expect(metric.Send(fakeStatsdClient, "{{.DoesNotExist404}}")).NotTo(Succeed())
-			//})
 		})
 	})
 })
