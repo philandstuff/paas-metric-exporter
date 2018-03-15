@@ -7,6 +7,7 @@ import (
 
 type DebugClient struct {
 	Prefix string
+    Template string
 }
 
 var _ Sender = DebugClient{}

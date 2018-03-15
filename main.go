@@ -72,11 +72,19 @@ func main() {
 
 	var sender senders.Sender
 	if !*debug {
-		statsdSender := senders.NewStatsdSender(*statsdEndpoint, *statsdPrefix)
+		statsdSender := senders.NewStatsdSender(
+            *statsdEndpoint,
+            *statsdPrefix,
+            config.Template,
+        )
+
 		statsdSender.Start()
 		sender = statsdSender
 	} else {
-		sender = senders.DebugClient{Prefix: *statsdPrefix}
+		sender = senders.DebugClient{
+            Prefix: *statsdPrefix,
+            Template: config.Template,
+        }
 	}
 
 	app := app.NewApplication(config, processors, sender)

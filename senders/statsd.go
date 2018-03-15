@@ -8,10 +8,14 @@ import (
 
 type StatsdSender struct {
 	Client *quipo_statsd.StatsdClient
+    Template string
 }
 
-func NewStatsdSender(statsdEndpoint string, statsdPrefix string) StatsdSender {
-	return StatsdSender{Client: quipo_statsd.NewStatsdClient(statsdEndpoint, statsdPrefix)}
+func NewStatsdSender(statsdEndpoint string, statsdPrefix string, template string) StatsdSender {
+	return StatsdSender {
+        Client: quipo_statsd.NewStatsdClient(statsdEndpoint, statsdPrefix),
+        Template: template,
+    }
 }
 
 func (s StatsdSender) Start() {
