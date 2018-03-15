@@ -12,7 +12,6 @@ import (
 	metrics_mocks "github.com/alphagov/paas-metric-exporter/metrics/mocks"
 	"github.com/alphagov/paas-metric-exporter/processors"
 	proc_mocks "github.com/alphagov/paas-metric-exporter/processors/mocks"
-	senders_mocks "github.com/alphagov/paas-metric-exporter/senders/mocks"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
 
 	. "github.com/onsi/ginkgo"
@@ -24,7 +23,7 @@ var _ = Describe("App", func() {
 		fetcher      *events_mocks.FakeFetcherProcess
 		proc1        *proc_mocks.FakeProcessor
 		proc2        *proc_mocks.FakeProcessor
-		sender       *senders_mocks.FakeSender
+		sender       *metrics_mocks.FakeSender
 		app          *Application
 		appEventChan chan *events.AppEvent
 		errorChan    chan error
@@ -41,7 +40,7 @@ var _ = Describe("App", func() {
 			sonde_events.Envelope_ContainerMetric: proc1,
 			sonde_events.Envelope_LogMessage:      proc2,
 		}
-		sender = &senders_mocks.FakeSender{}
+		sender = &metrics_mocks.FakeSender{}
 		appEventChan = make(chan *events.AppEvent, 10)
 		errorChan = make(chan error)
 		app = NewApplication(

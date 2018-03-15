@@ -3,6 +3,8 @@ package senders
 import (
 	"log"
 	"time"
+
+	"github.com/alphagov/paas-metric-exporter/metrics"
 )
 
 type DebugClient struct {
@@ -10,7 +12,7 @@ type DebugClient struct {
     Template string
 }
 
-var _ Sender = DebugClient{}
+var _ metrics.Sender = DebugClient{}
 
 func (d DebugClient) Gauge(stat string, value int64) error {
 	log.Printf("gauge %s %d\n", d.Prefix+stat, value)

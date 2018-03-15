@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alphagov/paas-metric-exporter/app"
+	"github.com/alphagov/paas-metric-exporter/metrics"
 	"github.com/alphagov/paas-metric-exporter/processors"
 	"github.com/alphagov/paas-metric-exporter/senders"
 	"github.com/cloudfoundry-community/go-cfclient"
@@ -70,7 +71,7 @@ func main() {
 		sonde_events.Envelope_HttpStartStop:   &processors.HttpStartStopProcessor{},
 	}
 
-	var sender senders.Sender
+	var sender metrics.Sender
 	if !*debug {
 		statsdSender := senders.NewStatsdSender(
             *statsdEndpoint,
