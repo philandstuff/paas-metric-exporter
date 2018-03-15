@@ -25,31 +25,46 @@ func NewStatsdSender(statsdEndpoint string, statsdPrefix string, template string
 }
 
 func (s StatsdSender) Gauge(metric metrics.GaugeMetric) error {
-	stat, _ := s.presenter.Present(metric)
+	stat, err := s.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	return s.Client.Gauge(stat, metric.Value)
 }
 
 func (s StatsdSender) FGauge(metric metrics.FGaugeMetric) error {
-	stat, _ := s.presenter.Present(metric)
+	stat, err := s.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	return s.Client.FGauge(stat, metric.Value)
 }
 
 func (s StatsdSender) Incr(metric metrics.CounterMetric) error {
-	stat, _ := s.presenter.Present(metric)
+	stat, err := s.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	return s.Client.Incr(stat, metric.Value)
 }
 
 func (s StatsdSender) Timing(metric metrics.TimingMetric) error {
-	stat, _ := s.presenter.Present(metric)
+	stat, err := s.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	return s.Client.Timing(stat, metric.Value)
 }
 
 func (s StatsdSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
-	stat, _ := s.presenter.Present(metric)
+	stat, err := s.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	return s.Client.PrecisionTiming(stat, metric.Value)
 }

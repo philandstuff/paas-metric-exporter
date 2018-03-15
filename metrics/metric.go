@@ -2,18 +2,7 @@ package metrics
 
 import (
 	"time"
-
-	"github.com/alphagov/paas-metric-exporter/presenters"
 )
-
-func render(template string, m Metric) (string, error) {
-    presenter, err := presenters.NewPathPresenter(template)
-    if err != nil {
-        return "", err
-    }
-
-    return presenter.Present(m)
-}
 
 var _ Metric = CounterMetric{}
 var _ Metric = GaugeMetric{}
@@ -54,11 +43,6 @@ func (m CounterMetric) Name() string {
 }
 
 func (m CounterMetric) Send(sender Sender, tmpl string) error {
-	//tmplName, err := render(tmpl, m)
-	//if err != nil {
-	//	return err
-	//}
-
 	return sender.Incr(m)
 }
 
@@ -80,11 +64,6 @@ func (m GaugeMetric) Name() string {
 }
 
 func (m GaugeMetric) Send(sender Sender, tmpl string) error {
-	//tmplName, err := render(tmpl, m)
-	//if err != nil {
-	//	return err
-	//}
-
 	return sender.Gauge(m)
 }
 
@@ -106,11 +85,6 @@ func (m FGaugeMetric) Name() string {
 }
 
 func (m FGaugeMetric) Send(sender Sender, tmpl string) error {
-	//tmplName, err := render(tmpl, m)
-	//if err != nil {
-	//	return err
-	//}
-
 	return sender.FGauge(m)
 }
 
@@ -132,11 +106,6 @@ func (m TimingMetric) Name() string {
 }
 
 func (m TimingMetric) Send(sender Sender, tmpl string) error {
-	//tmplName, err := render(tmpl, m)
-	//if err != nil {
-	//	return err
-	//}
-
 	return sender.Timing(m)
 }
 
@@ -158,10 +127,5 @@ func (m PrecisionTimingMetric) Name() string {
 }
 
 func (m PrecisionTimingMetric) Send(sender Sender, tmpl string) error {
-	//tmplName, err := render(tmpl, m)
-	//if err != nil {
-	//	return err
-	//}
-
 	return sender.PrecisionTiming(m)
 }

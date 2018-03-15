@@ -22,36 +22,51 @@ func NewDebugSender(statsdPrefix string, template string) (DebugSender, error) {
 }
 
 func (d DebugSender) Gauge(metric metrics.GaugeMetric) error {
-	stat, _ := d.presenter.Present(metric)
+	stat, err := d.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	log.Printf("gauge %s %d\n", d.Prefix+stat, metric.Value)
-	return nil
+    return nil
 }
 
 func (d DebugSender) FGauge(metric metrics.FGaugeMetric) error {
-	stat, _ := d.presenter.Present(metric)
+	stat, err := d.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	log.Printf("gauge %s %d\n", d.Prefix+stat, metric.Value)
-	return nil
+    return nil
 }
 
 func (d DebugSender) Incr(metric metrics.CounterMetric) error {
-	stat, _ := d.presenter.Present(metric)
+	stat, err := d.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	log.Printf("incr %s %d\n", d.Prefix+stat, metric.Value)
-	return nil
+    return nil
 }
 
 func (d DebugSender) Timing(metric metrics.TimingMetric) error {
-	stat, _ := d.presenter.Present(metric)
+	stat, err := d.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	log.Printf("timing %s %d\n", d.Prefix+stat, metric.Value)
-	return nil
+    return nil
 }
 
 func (d DebugSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
-	stat, _ := d.presenter.Present(metric)
+	stat, err := d.presenter.Present(metric)
+    if err != nil {
+        return err
+    }
 
 	log.Printf("timing %s %d\n", d.Prefix+stat, metric.Value)
-	return nil
+    return nil
 }
