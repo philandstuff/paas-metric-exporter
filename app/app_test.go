@@ -108,16 +108,14 @@ var _ = Describe("App", func() {
 			appEventChan <- event
 
 			Eventually(func() int {
-				return sender.GaugeCallCount()
+				return sender.Gauge2CallCount()
 			}).Should(Equal(2))
 
-			statName0, statValue0 := sender.GaugeArgsForCall(0)
-			Expect(statName0).To(Equal("metric1"))
-			Expect(statValue0).To(Equal(int64(1)))
+            actualMetric1 := sender.Gauge2ArgsForCall(0)
+            Expect(actualMetric1).To(Equal(*metric1))
 
-			statName1, statValue1 := sender.GaugeArgsForCall(1)
-			Expect(statName1).To(Equal("metric2"))
-			Expect(statValue1).To(Equal(int64(2)))
+            actualMetric2 := sender.Gauge2ArgsForCall(1)
+            Expect(actualMetric2).To(Equal(*metric2))
 		}, 3)
 
 		It("should handle metrics sending errors", func() {
@@ -208,14 +206,14 @@ var _ = Describe("App", func() {
 			appEventChan <- event
 
 			Eventually(func() int {
-				return sender.GaugeCallCount()
+				return sender.Gauge2CallCount()
 			}).Should(Equal(1))
 			Consistently(func() int {
-				return sender.GaugeCallCount()
+				return sender.Gauge2CallCount()
 			}).Should(Equal(1))
 
-			statName0, _ := sender.GaugeArgsForCall(0)
-			Expect(statName0).To(Equal("whitelisted.metric"))
+			actualMetric := sender.Gauge2ArgsForCall(0)
+			Expect(actualMetric).To(Equal(*metric2))
 		}, 3)
 
 	})
