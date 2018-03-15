@@ -4,7 +4,13 @@ import (
 	"time"
 
 	"github.com/alphagov/paas-metric-exporter/senders"
+	"github.com/alphagov/paas-metric-exporter/presenters"
 )
+
+func render(template string, m Metric) (string, error) {
+    presenter := presenters.PathPresenter { Template: template }
+    return presenter.Present(m)
+}
 
 var _ Metric = CounterMetric{}
 var _ Metric = GaugeMetric{}
