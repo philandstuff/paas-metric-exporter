@@ -96,7 +96,7 @@ func (a *Application) Run() {
 				if !a.enabled(metric.Name()) {
 					continue
 				}
-				if err := metric.Send(a.sender, a.config.Template); err != nil {
+				if err := metric.Send(a.sender); err != nil {
 					log.Printf("sending metrics failed: %v\n", err)
 				}
 			}

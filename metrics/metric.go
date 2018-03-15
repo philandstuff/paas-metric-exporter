@@ -21,7 +21,7 @@ type Sender interface {
 
 //go:generate counterfeiter -o mocks/metric.go . Metric
 type Metric interface {
-	Send(sender Sender, template string) error
+	Send(sender Sender) error
 	Name() string
 }
 
@@ -42,7 +42,7 @@ func (m CounterMetric) Name() string {
 	return m.Metric
 }
 
-func (m CounterMetric) Send(sender Sender, tmpl string) error {
+func (m CounterMetric) Send(sender Sender) error {
 	return sender.Incr(m)
 }
 
@@ -63,7 +63,7 @@ func (m GaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m GaugeMetric) Send(sender Sender, tmpl string) error {
+func (m GaugeMetric) Send(sender Sender) error {
 	return sender.Gauge(m)
 }
 
@@ -84,7 +84,7 @@ func (m FGaugeMetric) Name() string {
 	return m.Metric
 }
 
-func (m FGaugeMetric) Send(sender Sender, tmpl string) error {
+func (m FGaugeMetric) Send(sender Sender) error {
 	return sender.FGauge(m)
 }
 
@@ -105,7 +105,7 @@ func (m TimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m TimingMetric) Send(sender Sender, tmpl string) error {
+func (m TimingMetric) Send(sender Sender) error {
 	return sender.Timing(m)
 }
 
@@ -126,6 +126,6 @@ func (m PrecisionTimingMetric) Name() string {
 	return m.Metric
 }
 
-func (m PrecisionTimingMetric) Send(sender Sender, tmpl string) error {
+func (m PrecisionTimingMetric) Send(sender Sender) error {
 	return sender.PrecisionTiming(m)
 }
