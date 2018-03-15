@@ -23,35 +23,35 @@ type FakeStatsdClient struct {
 	precisionTimingValue  time.Duration
 }
 
-func (f *FakeStatsdClient) Timing2(metric TimingMetric) error {
+func (f *FakeStatsdClient) Timing(metric TimingMetric) error {
 	f.timingCalled = true
 	f.stat = metric.Metric
 	f.value = metric.Value
 	return nil
 }
 
-func (f *FakeStatsdClient) PrecisionTiming2(metric PrecisionTimingMetric) error {
+func (f *FakeStatsdClient) PrecisionTiming(metric PrecisionTimingMetric) error {
 	f.precisionTimingCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.precisionTimingValue = metric.Value
 	return nil
 }
 
-func (f *FakeStatsdClient) Incr2(metric CounterMetric) error {
+func (f *FakeStatsdClient) Incr(metric CounterMetric) error {
 	f.incrCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.value = metric.Value
 	return nil
 }
 
-func (f *FakeStatsdClient) Gauge2(metric GaugeMetric) error {
+func (f *FakeStatsdClient) Gauge(metric GaugeMetric) error {
 	f.gaugeCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.value = metric.Value
 	return nil
 }
 
-func (f *FakeStatsdClient) FGauge2(metric FGaugeMetric) error {
+func (f *FakeStatsdClient) FGauge(metric FGaugeMetric) error {
 	f.fGaugeCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.fValue = metric.Value

@@ -14,7 +14,7 @@ type DebugClient struct {
 
 var _ metrics.Sender = DebugClient{}
 
-func (d DebugClient) Gauge2(metric metrics.GaugeMetric) error {
+func (d DebugClient) Gauge(metric metrics.GaugeMetric) error {
     presenter := presenters.PathPresenter{ Template: d.Template }
 	stat, _ := presenter.Present(metric)
 
@@ -22,7 +22,7 @@ func (d DebugClient) Gauge2(metric metrics.GaugeMetric) error {
 	return nil
 }
 
-func (d DebugClient) FGauge2(metric metrics.FGaugeMetric) error {
+func (d DebugClient) FGauge(metric metrics.FGaugeMetric) error {
     presenter := presenters.PathPresenter{ Template: d.Template }
 	stat, _ := presenter.Present(metric)
 
@@ -30,7 +30,7 @@ func (d DebugClient) FGauge2(metric metrics.FGaugeMetric) error {
 	return nil
 }
 
-func (d DebugClient) Incr2(metric metrics.CounterMetric) error {
+func (d DebugClient) Incr(metric metrics.CounterMetric) error {
     presenter := presenters.PathPresenter{ Template: d.Template }
 	stat, _ := presenter.Present(metric)
 
@@ -38,7 +38,7 @@ func (d DebugClient) Incr2(metric metrics.CounterMetric) error {
 	return nil
 }
 
-func (d DebugClient) Timing2(metric metrics.TimingMetric) error {
+func (d DebugClient) Timing(metric metrics.TimingMetric) error {
     presenter := presenters.PathPresenter{ Template: d.Template }
 	stat, _ := presenter.Present(metric)
 
@@ -46,7 +46,7 @@ func (d DebugClient) Timing2(metric metrics.TimingMetric) error {
 	return nil
 }
 
-func (d DebugClient) PrecisionTiming2(metric metrics.PrecisionTimingMetric) error {
+func (d DebugClient) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
     presenter := presenters.PathPresenter{ Template: d.Template }
 	stat, _ := presenter.Present(metric)
 

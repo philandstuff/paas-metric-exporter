@@ -108,13 +108,13 @@ var _ = Describe("App", func() {
 			appEventChan <- event
 
 			Eventually(func() int {
-				return sender.Gauge2CallCount()
+				return sender.GaugeCallCount()
 			}).Should(Equal(2))
 
-            actualMetric1 := sender.Gauge2ArgsForCall(0)
+            actualMetric1 := sender.GaugeArgsForCall(0)
             Expect(actualMetric1).To(Equal(*metric1))
 
-            actualMetric2 := sender.Gauge2ArgsForCall(1)
+            actualMetric2 := sender.GaugeArgsForCall(1)
             Expect(actualMetric2).To(Equal(*metric2))
 		}, 3)
 
@@ -206,13 +206,13 @@ var _ = Describe("App", func() {
 			appEventChan <- event
 
 			Eventually(func() int {
-				return sender.Gauge2CallCount()
+				return sender.GaugeCallCount()
 			}).Should(Equal(1))
 			Consistently(func() int {
-				return sender.Gauge2CallCount()
+				return sender.GaugeCallCount()
 			}).Should(Equal(1))
 
-			actualMetric := sender.Gauge2ArgsForCall(0)
+			actualMetric := sender.GaugeArgsForCall(0)
 			Expect(actualMetric).To(Equal(*metric2))
 		}, 3)
 

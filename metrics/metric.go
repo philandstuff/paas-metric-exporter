@@ -19,11 +19,11 @@ var _ Metric = PrecisionTimingMetric{}
 
 //go:generate counterfeiter -o mocks/sender.go . Sender
 type Sender interface {
-	Gauge2(metric GaugeMetric) error
-	FGauge2(metric FGaugeMetric) error
-	Incr2(metric CounterMetric) error
-	Timing2(metric TimingMetric) error
-	PrecisionTiming2(metric PrecisionTimingMetric) error
+	Gauge(metric GaugeMetric) error
+	FGauge(metric FGaugeMetric) error
+	Incr(metric CounterMetric) error
+	Timing(metric TimingMetric) error
+	PrecisionTiming(metric PrecisionTimingMetric) error
 }
 
 //go:generate counterfeiter -o mocks/metric.go . Metric
@@ -55,7 +55,7 @@ func (m CounterMetric) Send(sender Sender, tmpl string) error {
 	//	return err
 	//}
 
-	return sender.Incr2(m)
+	return sender.Incr(m)
 }
 
 type GaugeMetric struct {
@@ -81,7 +81,7 @@ func (m GaugeMetric) Send(sender Sender, tmpl string) error {
 	//	return err
 	//}
 
-	return sender.Gauge2(m)
+	return sender.Gauge(m)
 }
 
 type FGaugeMetric struct {
@@ -107,7 +107,7 @@ func (m FGaugeMetric) Send(sender Sender, tmpl string) error {
 	//	return err
 	//}
 
-	return sender.FGauge2(m)
+	return sender.FGauge(m)
 }
 
 type TimingMetric struct {
@@ -133,7 +133,7 @@ func (m TimingMetric) Send(sender Sender, tmpl string) error {
 	//	return err
 	//}
 
-	return sender.Timing2(m)
+	return sender.Timing(m)
 }
 
 type PrecisionTimingMetric struct {
@@ -159,5 +159,5 @@ func (m PrecisionTimingMetric) Send(sender Sender, tmpl string) error {
 	//	return err
 	//}
 
-	return sender.PrecisionTiming2(m)
+	return sender.PrecisionTiming(m)
 }

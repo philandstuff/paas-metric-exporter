@@ -24,35 +24,35 @@ func (s StatsdSender) Start() {
 	s.Client.CreateSocket()
 }
 
-func (s StatsdSender) Gauge2(metric metrics.GaugeMetric) error {
+func (s StatsdSender) Gauge(metric metrics.GaugeMetric) error {
     presenter := presenters.PathPresenter{ Template: s.Template }
 	stat, _ := presenter.Present(metric)
 
 	return s.Client.Gauge(stat, metric.Value)
 }
 
-func (s StatsdSender) FGauge2(metric metrics.FGaugeMetric) error {
+func (s StatsdSender) FGauge(metric metrics.FGaugeMetric) error {
     presenter := presenters.PathPresenter{ Template: s.Template }
 	stat, _ := presenter.Present(metric)
 
 	return s.Client.FGauge(stat, metric.Value)
 }
 
-func (s StatsdSender) Incr2(metric metrics.CounterMetric) error {
+func (s StatsdSender) Incr(metric metrics.CounterMetric) error {
     presenter := presenters.PathPresenter{ Template: s.Template }
 	stat, _ := presenter.Present(metric)
 
 	return s.Client.Incr(stat, metric.Value)
 }
 
-func (s StatsdSender) Timing2(metric metrics.TimingMetric) error {
+func (s StatsdSender) Timing(metric metrics.TimingMetric) error {
     presenter := presenters.PathPresenter{ Template: s.Template }
 	stat, _ := presenter.Present(metric)
 
 	return s.Client.Timing(stat, metric.Value)
 }
 
-func (s StatsdSender) PrecisionTiming2(metric metrics.PrecisionTimingMetric) error {
+func (s StatsdSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
     presenter := presenters.PathPresenter{ Template: s.Template }
 	stat, _ := presenter.Present(metric)
 
