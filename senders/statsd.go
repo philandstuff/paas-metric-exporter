@@ -13,15 +13,15 @@ type StatsdSender struct {
 
 var _ metrics.Sender = StatsdSender{}
 
-func NewStatsdSender(statsdEndpoint string, statsdPrefix string, template string) StatsdSender {
-	return StatsdSender {
-        Client: quipo_statsd.NewStatsdClient(statsdEndpoint, statsdPrefix),
-        presenter: presenters.PathPresenter{ Template: template },
-    }
-}
+func NewStatsdSender(statsdEndpoint string, statsdPrefix string, template string) (StatsdSender, error) {
+    presenter, err := presenters.NewPathPresenter(template)
 
-func (s StatsdSender) Start() {
-	s.Client.CreateSocket()
+    client := quipo_statsd.NewStatsdClient(statsdEndpoint, statsdPrefix)
+	client.CreateSocket()
+
+    sender := StatsdSender { Client: client, presenter: presenter }
+
+    return sender, err
 }
 
 func (s StatsdSender) Gauge(metric metrics.GaugeMetric) error {

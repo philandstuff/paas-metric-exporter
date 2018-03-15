@@ -14,11 +14,11 @@ type DebugSender struct {
 
 var _ metrics.Sender = DebugSender{}
 
-func NewDebugSender(statsdPrefix string, template string) DebugSender {
-	return DebugSender {
-        Prefix: statsdPrefix,
-        presenter: presenters.PathPresenter{ Template: template },
-    }
+func NewDebugSender(statsdPrefix string, template string) (DebugSender, error) {
+    presenter, err := presenters.NewPathPresenter(template)
+    sender := DebugSender { Prefix: statsdPrefix, presenter: presenter }
+
+	return sender, err
 }
 
 func (d DebugSender) Gauge(metric metrics.GaugeMetric) error {

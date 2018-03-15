@@ -7,7 +7,11 @@ import (
 )
 
 func render(template string, m Metric) (string, error) {
-    presenter := presenters.PathPresenter { Template: template }
+    presenter, err := presenters.NewPathPresenter(template)
+    if err != nil {
+        return "", err
+    }
+
     return presenter.Present(m)
 }
 

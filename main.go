@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"log"
 	"strings"
 	"time"
@@ -72,21 +73,25 @@ func main() {
 	}
 
 	var sender metrics.Sender
+    var err error
+
 	if !*debug {
-		statsdSender := senders.NewStatsdSender(
+		sender, err = senders.NewStatsdSender(
             *statsdEndpoint,
             *statsdPrefix,
             config.Template,
         )
-
-		statsdSender.Start()
-		sender = statsdSender
 	} else {
-		sender = senders.NewDebugSender(
+		sender, err = senders.NewDebugSender(
             *statsdPrefix,
             config.Template,
         )
 	}
+
+    if err != nil {
+        os.Stderr.WriteString(err.Error() + "\n")
+        os.Exit(1)
+    }
 
 	app := app.NewApplication(config, processors, sender)
 	app.Run()
