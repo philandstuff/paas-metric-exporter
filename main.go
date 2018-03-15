@@ -72,17 +72,23 @@ func main() {
 		sonde_events.Envelope_HttpStartStop:   &processors.HttpStartStopProcessor{},
 	}
 
+    // TODO - make this a flag
+    prometheus := true
+
 	var sender metrics.Sender
     var err error
 
-	if !*debug {
-		sender, err = senders.NewStatsdSender(
-            *statsdEndpoint,
+	if *debug {
+		sender, err = senders.NewDebugSender(
             *statsdPrefix,
             config.Template,
         )
+    } else if prometheus {
+		sender = senders.NewPrometheusSender()
+        err = nil
 	} else {
-		sender, err = senders.NewDebugSender(
+		sender, err = senders.NewStatsdSender(
+            *statsdEndpoint,
             *statsdPrefix,
             config.Template,
         )
