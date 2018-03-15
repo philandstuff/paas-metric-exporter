@@ -7,48 +7,50 @@ import (
 	"github.com/alphagov/paas-metric-exporter/presenters"
 )
 
-type DebugClient struct {
+type DebugSender struct {
 	Prefix string
-    Template string
+    presenter presenters.PathPresenter
 }
 
-var _ metrics.Sender = DebugClient{}
+var _ metrics.Sender = DebugSender{}
 
-func (d DebugClient) Gauge(metric metrics.GaugeMetric) error {
-    presenter := presenters.PathPresenter{ Template: d.Template }
-	stat, _ := presenter.Present(metric)
+func NewDebugSender(statsdPrefix string, template string) DebugSender {
+	return DebugSender {
+        Prefix: statsdPrefix,
+        presenter: presenters.PathPresenter{ Template: template },
+    }
+}
+
+func (d DebugSender) Gauge(metric metrics.GaugeMetric) error {
+	stat, _ := d.presenter.Present(metric)
 
 	log.Printf("gauge %s %d\n", d.Prefix+stat, metric.Value)
 	return nil
 }
 
-func (d DebugClient) FGauge(metric metrics.FGaugeMetric) error {
-    presenter := presenters.PathPresenter{ Template: d.Template }
-	stat, _ := presenter.Present(metric)
+func (d DebugSender) FGauge(metric metrics.FGaugeMetric) error {
+	stat, _ := d.presenter.Present(metric)
 
 	log.Printf("gauge %s %d\n", d.Prefix+stat, metric.Value)
 	return nil
 }
 
-func (d DebugClient) Incr(metric metrics.CounterMetric) error {
-    presenter := presenters.PathPresenter{ Template: d.Template }
-	stat, _ := presenter.Present(metric)
+func (d DebugSender) Incr(metric metrics.CounterMetric) error {
+	stat, _ := d.presenter.Present(metric)
 
 	log.Printf("incr %s %d\n", d.Prefix+stat, metric.Value)
 	return nil
 }
 
-func (d DebugClient) Timing(metric metrics.TimingMetric) error {
-    presenter := presenters.PathPresenter{ Template: d.Template }
-	stat, _ := presenter.Present(metric)
+func (d DebugSender) Timing(metric metrics.TimingMetric) error {
+	stat, _ := d.presenter.Present(metric)
 
 	log.Printf("timing %s %d\n", d.Prefix+stat, metric.Value)
 	return nil
 }
 
-func (d DebugClient) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
-    presenter := presenters.PathPresenter{ Template: d.Template }
-	stat, _ := presenter.Present(metric)
+func (d DebugSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
+	stat, _ := d.presenter.Present(metric)
 
 	log.Printf("timing %s %d\n", d.Prefix+stat, metric.Value)
 	return nil

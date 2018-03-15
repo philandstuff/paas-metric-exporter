@@ -82,10 +82,10 @@ func main() {
 		statsdSender.Start()
 		sender = statsdSender
 	} else {
-		sender = senders.DebugClient{
-            Prefix: *statsdPrefix,
-            Template: config.Template,
-        }
+		sender = senders.NewDebugSender(
+            *statsdPrefix,
+            config.Template,
+        )
 	}
 
 	app := app.NewApplication(config, processors, sender)
