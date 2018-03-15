@@ -20,15 +20,10 @@ var _ Metric = PrecisionTimingMetric{}
 //go:generate counterfeiter -o mocks/sender.go . Sender
 type Sender interface {
 	Gauge2(metric GaugeMetric) error
-	Gauge(stat string, value int64) error
 	FGauge2(metric FGaugeMetric) error
-	FGauge(stat string, value float64) error
 	Incr2(metric CounterMetric) error
-	Incr(stat string, count int64) error
 	Timing2(metric TimingMetric) error
-	Timing(string, int64) error
 	PrecisionTiming2(metric PrecisionTimingMetric) error
-	PrecisionTiming(stat string, delta time.Duration) error
 }
 
 //go:generate counterfeiter -o mocks/metric.go . Metric

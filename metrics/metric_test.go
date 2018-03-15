@@ -30,24 +30,10 @@ func (f *FakeStatsdClient) Timing2(metric TimingMetric) error {
 	return nil
 }
 
-func (f *FakeStatsdClient) Timing(stat string, delta int64) error {
-	f.timingCalled = true
-	f.stat = stat
-	f.value = delta
-	return nil
-}
-
 func (f *FakeStatsdClient) PrecisionTiming2(metric PrecisionTimingMetric) error {
 	f.precisionTimingCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.precisionTimingValue = metric.Value
-	return nil
-}
-
-func (f *FakeStatsdClient) PrecisionTiming(stat string, delta time.Duration) error {
-	f.precisionTimingCalled = true
-	f.stat = stat
-	f.precisionTimingValue = delta
 	return nil
 }
 
@@ -58,13 +44,6 @@ func (f *FakeStatsdClient) Incr2(metric CounterMetric) error {
 	return nil
 }
 
-func (f *FakeStatsdClient) Incr(stat string, count int64) error {
-	f.incrCalled = true
-	f.stat = stat
-	f.value = count
-	return nil
-}
-
 func (f *FakeStatsdClient) Gauge2(metric GaugeMetric) error {
 	f.gaugeCalled = true
 	f.stat = metric.Metric // should this be the presented name?
@@ -72,25 +51,10 @@ func (f *FakeStatsdClient) Gauge2(metric GaugeMetric) error {
 	return nil
 }
 
-func (f *FakeStatsdClient) Gauge(stat string, value int64) error {
-	f.gaugeCalled = true
-	f.stat = stat
-	f.value = value
-	return nil
-}
-
 func (f *FakeStatsdClient) FGauge2(metric FGaugeMetric) error {
 	f.fGaugeCalled = true
 	f.stat = metric.Metric // should this be the presented name?
 	f.fValue = metric.Value
-
-	return errors.New("StatsdClientSendError")
-}
-
-func (f *FakeStatsdClient) FGauge(stat string, value float64) error {
-	f.fGaugeCalled = true
-	f.stat = stat
-	f.fValue = value
 
 	return errors.New("StatsdClientSendError")
 }
