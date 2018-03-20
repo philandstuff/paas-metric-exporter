@@ -9,8 +9,9 @@ import (
 
 type PrometheusSender struct {
     labelNames []string
+
     counterVecs map[string]prometheus.CounterVec
-//    gauges map[string]prometheus.Gauge
+    gaugeVecs map[string]prometheus.GaugeVec
 //    histograms map[string]prometheus.Histogram
 }
 
@@ -28,14 +29,42 @@ func NewPrometheusSender() *PrometheusSender {
     }
 
     counterVecs := make(map[string]prometheus.CounterVec);
-    return &PrometheusSender{ labelNames, counterVecs }
+    gaugeVecs := make(map[string]prometheus.GaugeVec);
+
+    return &PrometheusSender{ labelNames, counterVecs, gaugeVecs }
 }
 
 func (s *PrometheusSender) Gauge(metric metrics.GaugeMetric) error {
-    return nil
+    return s.FGauge(metrics.FGaugeMetric{
+        App:          metric.App,
+        CellId:       metric.CellId,
+        GUID:         metric.GUID,
+        Instance:     metric.Instance,
+        Job:          metric.Job,
+        Metric:       metric.Metric,
+        Organisation: metric.Organisation,
+        Space:        metric.Space,
+
+        Value:        float64(metric.Value),
+    })
 }
 
 func (s *PrometheusSender) FGauge(metric metrics.FGaugeMetric) error {
+    gaugeVec, present := s.gaugeVecs[metric.Name()]
+
+    if !present {
+        options := prometheus.GaugeOpts{ Name: metric.Name(), Help: " " }
+        gaugeVec = *prometheus.NewGaugeVec(options, s.labelNames)
+
+        prometheus.MustRegister(gaugeVec)
+        s.gaugeVecs[metric.Name()] = gaugeVec
+    }
+
+    labels := s.labels(metric)
+    value := float64(metric.Value)
+
+    gaugeVec.With(labels).Set(value)
+
     return nil
 }
 

@@ -62,6 +62,42 @@ var _ = Describe("PrometheusSender", func() {
             Expect(metric.GetValue()).To(Equal(float64(3)))
         })
     })
+
+    Describe("#FGauge", func() {
+        It("sends a floating point gauge metric to prometheus", func() {
+            families := captureMetrics(func () {
+                sender.FGauge(FGaugeMetric{
+                    Metric: "my_fgauge",
+                    Value: 3.14,
+                })
+            })
+
+            family := families[0]
+            metrics := family.GetMetric()
+            metric := metrics[0].Gauge
+
+            Expect(family.GetName()).To(Equal("my_fgauge"))
+            Expect(metric.GetValue()).To(Equal(3.14))
+        })
+    })
+
+    Describe("#Gauge", func() {
+        It("uses the FGauge method because prometheus stores its data as floats", func() {
+            families := captureMetrics(func () {
+                sender.Gauge(GaugeMetric{
+                    Metric: "my_gauge",
+                    Value: 3,
+                })
+            })
+
+            family := families[0]
+            metrics := family.GetMetric()
+            metric := metrics[0].Gauge
+
+            Expect(family.GetName()).To(Equal("my_gauge"))
+            Expect(metric.GetValue()).To(Equal(3.0))
+        })
+    })
 })
 
 type m = []*io_prometheus_client.MetricFamily
@@ -73,7 +109,12 @@ func captureMetrics(callback func()) m {
     callback()
     after, _ := gatherer.Gather()
 
-    return subtract(after, before)
+    subtracted := subtract(after, before)
+    Expect(len(subtracted)).To(BeNumerically(">", 0),
+        "expected to capture some new metrics",
+    )
+
+    return subtracted
 }
 
 func subtract(aSlice m, bSlice m) m {
