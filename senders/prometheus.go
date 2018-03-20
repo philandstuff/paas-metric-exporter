@@ -1,6 +1,8 @@
 package senders
 
 import (
+    "time"
+
     "github.com/fatih/structs"
 
 	"github.com/alphagov/paas-metric-exporter/metrics"
@@ -12,7 +14,7 @@ type PrometheusSender struct {
 
     counterVecs map[string]prometheus.CounterVec
     gaugeVecs map[string]prometheus.GaugeVec
-//    histograms map[string]prometheus.Histogram
+    histogramVecs map[string]prometheus.HistogramVec
 }
 
 var _ metrics.Sender = &PrometheusSender{}
@@ -30,8 +32,14 @@ func NewPrometheusSender() *PrometheusSender {
 
     counterVecs := make(map[string]prometheus.CounterVec);
     gaugeVecs := make(map[string]prometheus.GaugeVec);
+    histogramVecs := make(map[string]prometheus.HistogramVec);
 
-    return &PrometheusSender{ labelNames, counterVecs, gaugeVecs }
+    return &PrometheusSender{
+        labelNames,
+        counterVecs,
+        gaugeVecs,
+        histogramVecs,
+    }
 }
 
 func (s *PrometheusSender) Gauge(metric metrics.GaugeMetric) error {
@@ -73,6 +81,21 @@ func (s *PrometheusSender) Incr(metric metrics.CounterMetric) error {
 }
 
 func (s *PrometheusSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
+    histogramVec, present := s.histogramVecs[metric.Name()]
+
+    if !present {
+        options := prometheus.HistogramOpts{ Name: metric.Name(), Help: " " }
+        histogramVec = *prometheus.NewHistogramVec(options, s.labelNames)
+
+        prometheus.MustRegister(histogramVec)
+        s.histogramVecs[metric.Name()] = histogramVec
+    }
+
+    labels := s.labels(metric)
+    value := float64(metric.Value) / float64(time.Second)
+
+    histogramVec.With(labels).Observe(value)
+
     return nil
 }
 

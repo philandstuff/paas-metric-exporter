@@ -1,6 +1,8 @@
 package senders_test
 
 import (
+    "time"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_model/go"
 
@@ -78,6 +80,37 @@ var _ = Describe("PrometheusSender", func() {
 
             Expect(family.GetName()).To(Equal("my_gauge"))
             Expect(metric.GetValue()).To(Equal(3.0))
+        })
+    })
+
+    Describe("#PrecisionTiming", func() {
+        It("sends a histogram metric into a sensible bucket in prometheus", func() {
+            families := captureMetrics(func () {
+                sender.PrecisionTiming(PrecisionTimingMetric{
+                    Metric: "my_precise_time",
+                    Value: time.Duration(3142) * time.Millisecond,
+                })
+            })
+
+            family := families[0]
+            metrics := family.GetMetric()
+            metric := metrics[0].Histogram
+            buckets := metric.GetBucket()
+
+            Expect(family.GetName()).To(Equal("my_precise_time"))
+            Expect(metric.GetSampleCount()).To(Equal(uint64(1)))
+            Expect(metric.GetSampleSum()).To(Equal(3.142))
+
+            last_buckets := buckets[len(buckets) - 3:]
+
+            Expect(last_buckets[0].GetUpperBound()).To(Equal(2.5))
+            Expect(last_buckets[0].GetCumulativeCount()).To(Equal(uint64(0)))
+
+            Expect(last_buckets[1].GetUpperBound()).To(Equal(5.0))
+            Expect(last_buckets[1].GetCumulativeCount()).To(Equal(uint64(1)))
+
+            Expect(last_buckets[2].GetUpperBound()).To(Equal(10.0))
+            Expect(last_buckets[2].GetCumulativeCount()).To(Equal(uint64(1)))
         })
     })
 })
