@@ -63,26 +63,8 @@ var _ = Describe("PrometheusSender", func() {
         })
     })
 
-    Describe("#FGauge", func() {
-        It("sends a floating point gauge metric to prometheus", func() {
-            families := captureMetrics(func () {
-                sender.FGauge(FGaugeMetric{
-                    Metric: "my_fgauge",
-                    Value: 3.14,
-                })
-            })
-
-            family := families[0]
-            metrics := family.GetMetric()
-            metric := metrics[0].Gauge
-
-            Expect(family.GetName()).To(Equal("my_fgauge"))
-            Expect(metric.GetValue()).To(Equal(3.14))
-        })
-    })
-
     Describe("#Gauge", func() {
-        It("uses the FGauge method because prometheus stores its data as floats", func() {
+        It("sends a floating point gauge metric to prometheus", func() {
             families := captureMetrics(func () {
                 sender.Gauge(GaugeMetric{
                     Metric: "my_gauge",

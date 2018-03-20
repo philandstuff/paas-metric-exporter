@@ -35,21 +35,6 @@ func NewPrometheusSender() *PrometheusSender {
 }
 
 func (s *PrometheusSender) Gauge(metric metrics.GaugeMetric) error {
-    return s.FGauge(metrics.FGaugeMetric{
-        App:          metric.App,
-        CellId:       metric.CellId,
-        GUID:         metric.GUID,
-        Instance:     metric.Instance,
-        Job:          metric.Job,
-        Metric:       metric.Metric,
-        Organisation: metric.Organisation,
-        Space:        metric.Space,
-
-        Value:        float64(metric.Value),
-    })
-}
-
-func (s *PrometheusSender) FGauge(metric metrics.FGaugeMetric) error {
     gaugeVec, present := s.gaugeVecs[metric.Name()]
 
     if !present {
@@ -84,10 +69,6 @@ func (s *PrometheusSender) Incr(metric metrics.CounterMetric) error {
 
     counterVec.With(labels).Add(value)
 
-    return nil
-}
-
-func (s *PrometheusSender) Timing(metric metrics.TimingMetric) error {
     return nil
 }
 

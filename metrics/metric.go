@@ -6,16 +6,12 @@ import (
 
 var _ Metric = CounterMetric{}
 var _ Metric = GaugeMetric{}
-var _ Metric = FGaugeMetric{}
-var _ Metric = TimingMetric{}
 var _ Metric = PrecisionTimingMetric{}
 
 //go:generate counterfeiter -o mocks/sender.go . Sender
 type Sender interface {
 	Gauge(metric GaugeMetric) error
-	FGauge(metric FGaugeMetric) error
 	Incr(metric CounterMetric) error
-	Timing(metric TimingMetric) error
 	PrecisionTiming(metric PrecisionTimingMetric) error
 }
 
@@ -65,48 +61,6 @@ func (m GaugeMetric) Name() string {
 
 func (m GaugeMetric) Send(sender Sender) error {
 	return sender.Gauge(m)
-}
-
-type FGaugeMetric struct {
-	App          string
-	CellId       string
-	GUID         string
-	Instance     string
-	Job          string
-	Metric       string
-	Organisation string
-	Space        string
-
-	Value float64
-}
-
-func (m FGaugeMetric) Name() string {
-	return m.Metric
-}
-
-func (m FGaugeMetric) Send(sender Sender) error {
-	return sender.FGauge(m)
-}
-
-type TimingMetric struct {
-	App          string
-	CellId       string
-	GUID         string
-	Instance     string
-	Job          string
-	Metric       string
-	Organisation string
-	Space        string
-
-	Value int64
-}
-
-func (m TimingMetric) Name() string {
-	return m.Metric
-}
-
-func (m TimingMetric) Send(sender Sender) error {
-	return sender.Timing(m)
 }
 
 type PrecisionTimingMetric struct {
