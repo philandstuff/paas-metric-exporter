@@ -30,6 +30,7 @@ type CounterMetric struct {
 	Metric       string
 	Organisation string
 	Space        string
+    Metadata     map[string]string
 
 	Value int64
 }
@@ -51,6 +52,7 @@ type GaugeMetric struct {
 	Metric       string
 	Organisation string
 	Space        string
+    Metadata     map[string]string
 
 	Value int64
 }
@@ -72,6 +74,7 @@ type PrecisionTimingMetric struct {
 	Metric       string
 	Organisation string
 	Space        string
+    Metadata     map[string]string
 
 	Value time.Duration
 }

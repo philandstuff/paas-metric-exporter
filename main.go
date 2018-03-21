@@ -13,6 +13,7 @@ import (
 	"github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
 	"gopkg.in/alecthomas/kingpin.v2"
+	quipo_statsd "github.com/quipo/statsd"
 )
 
 var (
@@ -24,7 +25,7 @@ var (
 	skipSSLValidation = kingpin.Flag("skip-ssl-validation", "Please don't").Default("false").OverrideDefaultFromEnvar("SKIP_SSL_VALIDATION").Bool()
 	debug             = kingpin.Flag("debug", "Enable debug mode. This disables forwarding to statsd and prints to stdout").Default("false").OverrideDefaultFromEnvar("DEBUG").Bool()
 	updateFrequency   = kingpin.Flag("update-frequency", "The time in seconds, that takes between each apps update call.").Default("300").OverrideDefaultFromEnvar("UPDATE_FREQUENCY").Int64()
-	metricTemplate    = kingpin.Flag("metric-template", "The template that will form a new metric namespace.").Default("{{.Space}}.{{.App}}.{{.Instance}}.{{.Metric}}").OverrideDefaultFromEnvar("METRIC_TEMPLATE").String()
+	metricTemplate    = kingpin.Flag("metric-template", "The template that will form a new metric namespace.").Default(senders.DefaultTemplate).OverrideDefaultFromEnvar("METRIC_TEMPLATE").String()
 	metricWhitelist   = kingpin.Flag("metric-whitelist", "Comma separated metric name prefixes to enable.").Default("").OverrideDefaultFromEnvar("METRIC_WHITELIST").String()
 )
 
@@ -87,11 +88,10 @@ func main() {
 		sender = senders.NewPrometheusSender()
         err = nil
 	} else {
-		sender, err = senders.NewStatsdSender(
-            *statsdEndpoint,
-            *statsdPrefix,
-            config.Template,
-        )
+        client := quipo_statsd.NewStatsdClient(*statsdEndpoint, *statsdPrefix)
+        client.CreateSocket()
+
+		sender, err = senders.NewStatsdSender(client, config.Template)
 	}
 
     if err != nil {

@@ -7,18 +7,17 @@ import (
 )
 
 type StatsdSender struct {
-	Client *quipo_statsd.StatsdClient
+	Client quipo_statsd.Statsd
     presenter presenters.PathPresenter
 }
 
 var _ metrics.Sender = StatsdSender{}
 
-func NewStatsdSender(statsdEndpoint string, statsdPrefix string, template string) (StatsdSender, error) {
+const DefaultTemplate =
+    "{{.Space}}.{{.App}}.{{.Instance}}.{{.Metric}}{{if .Metadata.statusRange}}.{{.Metadata.statusRange}}{{end}}"
+
+func NewStatsdSender(client quipo_statsd.Statsd, template string) (StatsdSender, error) {
     presenter, err := presenters.NewPathPresenter(template)
-
-    client := quipo_statsd.NewStatsdClient(statsdEndpoint, statsdPrefix)
-	client.CreateSocket()
-
     sender := StatsdSender { Client: client, presenter: presenter }
 
     return sender, err

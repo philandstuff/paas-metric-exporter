@@ -3,13 +3,12 @@ package event
 import (
 	"reflect"
 	"testing"
-	"time"
 )
 
-func TestPrecisionTimingUpdate(t *testing.T) {
-	e1 := NewPrecisionTiming("test", 5*time.Microsecond)
-	e2 := NewPrecisionTiming("test", 3*time.Microsecond)
-	e3 := NewPrecisionTiming("test", 7*time.Microsecond)
+func TestTotalUpdate(t *testing.T) {
+	e1 := &Total{Name: "test", Value: int64(15)}
+	e2 := &Total{Name: "test", Value: int64(-10)}
+	e3 := &Total{Name: "test", Value: int64(8)}
 	err := e1.Update(e2)
 	if nil != err {
 		t.Error(err)
@@ -19,7 +18,7 @@ func TestPrecisionTimingUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := []string{"test.count:3|c", "test.avg:0.005000|ms", "test.min:0.003000|ms", "test.max:0.007000|ms"}
+	expected := []string{"test:13|t"} // only the last value is flushed
 	actual := e1.Stats()
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("did not receive all metrics: Expected: %T %v, Actual: %T %v ", expected, expected, actual, actual)

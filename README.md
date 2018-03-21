@@ -58,7 +58,7 @@ Response Times, all of the Requests metrics (`requests.1xx`, `requests.2xx`,
 `requests.3xx`, `requests.4xx`, `requests.5xx`, `requests.other`):
 
 ```sh
-export METRIC_WHITELIST="cpu,diskBytes,responseTime.2xx,requests"
+export METRIC_WHITELIST="cpu,diskBytes,responseTime,requests"
 go run main.go
 ```
 
@@ -74,6 +74,13 @@ You can use following template fields in your metric template:
 * `{{.Metric}}` - a metric from the list of available metrics
 * `{{.Organisation}}` - a CF organisation that the app belongs to
 * `{{.Space}}` - CF space used to deploy application
+* `{{.Metadata.statusRange}}` - status code range for response metrics (e.g. 2xx)
+
+Not all metrics contain `Metadata` so you may wish to wrap this in a conditional:
+
+```
+{{if .Metadata.statusRange}}.{{.Metadata.statusRange}}{{end}}"
+```
 
 ## Testing
 

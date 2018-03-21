@@ -148,9 +148,11 @@
   name = "github.com/quipo/statsd"
   packages = [
     ".",
-    "event"
+    "event",
+    "mock"
   ]
-  revision = "1090ab4693b587d42fbf75c2cc64a031a9f22a4b"
+  revision = "977fadbd5cda9975ab87279994ea2029efdbd436"
+  version = "1.4.0"
 
 [[projects]]
   name = "golang.org/x/net"
@@ -189,6 +191,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ee21bc2ef6233b93e80257b56d26e84269cc9ed8c359b1da58e8e07304b91cec"
+  inputs-digest = "136688a9fd5eea1711b6b4b249bf281034318ffae753deb001e4c6c70f3e5271"
   solver-name = "gps-cdcl"
   solver-version = 1
