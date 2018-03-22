@@ -19,6 +19,7 @@ type Sender interface {
 type Metric interface {
 	Send(sender Sender) error
 	Name() string
+	GetMetadata() map[string]string
 }
 
 type CounterMetric struct {
@@ -37,6 +38,10 @@ type CounterMetric struct {
 
 func (m CounterMetric) Name() string {
 	return m.Metric
+}
+
+func (m CounterMetric) GetMetadata() map[string]string {
+	return m.Metadata
 }
 
 func (m CounterMetric) Send(sender Sender) error {
@@ -61,6 +66,10 @@ func (m GaugeMetric) Name() string {
 	return m.Metric
 }
 
+func (m GaugeMetric) GetMetadata() map[string]string {
+	return m.Metadata
+}
+
 func (m GaugeMetric) Send(sender Sender) error {
 	return sender.Gauge(m)
 }
@@ -81,6 +90,10 @@ type PrecisionTimingMetric struct {
 
 func (m PrecisionTimingMetric) Name() string {
 	return m.Metric
+}
+
+func (m PrecisionTimingMetric) GetMetadata() map[string]string {
+	return m.Metadata
 }
 
 func (m PrecisionTimingMetric) Send(sender Sender) error {

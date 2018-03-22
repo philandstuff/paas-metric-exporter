@@ -63,6 +63,23 @@ var _ = Describe("PrometheusSender", func() {
 
             Expect(metric.GetValue()).To(Equal(float64(3)))
         })
+
+        It("includes Metadata as additional labels", func() {
+            families := captureMetrics(func () {
+                sender.Incr(CounterMetric{
+                    Metric: "response",
+                    Metadata: map[string]string{ "statusRange": "2xx" },
+                    Value: 1,
+                })
+            })
+
+            metrics := families[0].GetMetric()
+            labels := metrics[0].GetLabel()
+            metadata := labels[len(labels) - 1]
+
+            Expect(metadata.GetName()).To(Equal("statusRange"))
+            Expect(metadata.GetValue()).To(Equal("2xx"))
+        })
     })
 
     Describe("#Gauge", func() {

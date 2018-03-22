@@ -28,6 +28,15 @@ type FakeMetric struct {
 	nameReturnsOnCall map[int]struct {
 		result1 string
 	}
+	GetMetadataStub        func() map[string]string
+	getMetadataMutex       sync.RWMutex
+	getMetadataArgsForCall []struct{}
+	getMetadataReturns     struct {
+		result1 map[string]string
+	}
+	getMetadataReturnsOnCall map[int]struct {
+		result1 map[string]string
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -120,6 +129,46 @@ func (fake *FakeMetric) NameReturnsOnCall(i int, result1 string) {
 	}{result1}
 }
 
+func (fake *FakeMetric) GetMetadata() map[string]string {
+	fake.getMetadataMutex.Lock()
+	ret, specificReturn := fake.getMetadataReturnsOnCall[len(fake.getMetadataArgsForCall)]
+	fake.getMetadataArgsForCall = append(fake.getMetadataArgsForCall, struct{}{})
+	fake.recordInvocation("GetMetadata", []interface{}{})
+	fake.getMetadataMutex.Unlock()
+	if fake.GetMetadataStub != nil {
+		return fake.GetMetadataStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fake.getMetadataReturns.result1
+}
+
+func (fake *FakeMetric) GetMetadataCallCount() int {
+	fake.getMetadataMutex.RLock()
+	defer fake.getMetadataMutex.RUnlock()
+	return len(fake.getMetadataArgsForCall)
+}
+
+func (fake *FakeMetric) GetMetadataReturns(result1 map[string]string) {
+	fake.GetMetadataStub = nil
+	fake.getMetadataReturns = struct {
+		result1 map[string]string
+	}{result1}
+}
+
+func (fake *FakeMetric) GetMetadataReturnsOnCall(i int, result1 map[string]string) {
+	fake.GetMetadataStub = nil
+	if fake.getMetadataReturnsOnCall == nil {
+		fake.getMetadataReturnsOnCall = make(map[int]struct {
+			result1 map[string]string
+		})
+	}
+	fake.getMetadataReturnsOnCall[i] = struct {
+		result1 map[string]string
+	}{result1}
+}
+
 func (fake *FakeMetric) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -127,6 +176,8 @@ func (fake *FakeMetric) Invocations() map[string][][]interface{} {
 	defer fake.sendMutex.RUnlock()
 	fake.nameMutex.RLock()
 	defer fake.nameMutex.RUnlock()
+	fake.getMetadataMutex.RLock()
+	defer fake.getMetadataMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
