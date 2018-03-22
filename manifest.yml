@@ -7,4 +7,3 @@ applications:
   env:
     GOPACKAGENAME: github.com/alphagov/paas-metric-exporter
   health-check-type: none
-  no-route: true
