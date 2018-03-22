@@ -25,7 +25,7 @@ type Application struct {
 	config       *Config
 	processors   map[sonde_events.Envelope_EventType]processors.Processor
 	eventFetcher events.FetcherProcess
-	sender       metrics.Sender
+	senders      []metrics.Sender
 	appEventChan chan *events.AppEvent
 	errorChan    chan error
 	exitChan     chan bool
@@ -35,7 +35,7 @@ type Application struct {
 func NewApplication(
 	config *Config,
 	processors map[sonde_events.Envelope_EventType]processors.Processor,
-	sender metrics.Sender,
+	senders []metrics.Sender,
 ) *Application {
 	eventTypes := make([]sonde_events.Envelope_EventType, 0, len(processors))
 	for eventType := range processors {
@@ -53,7 +53,7 @@ func NewApplication(
 	return &Application{
 		config:       config,
 		processors:   processors,
-		sender:       sender,
+		senders:      senders,
 		eventFetcher: eventFetcher,
 		appEventChan: appEventChan,
 		errorChan:    errorChan,
@@ -96,8 +96,14 @@ func (a *Application) Run() {
 				if !a.enabled(metric.Name()) {
 					continue
 				}
-				if err := metric.Send(a.sender); err != nil {
-					log.Printf("sending metrics failed: %v\n", err)
+
+				// TODO Refactor when we move Send() off the metric
+				// and onto the sender interface
+				for _, sender := range a.senders {
+					err := metric.Send(sender)
+					if err != nil {
+						log.Printf("sending metrics failed %v\n", err)
+					}
 				}
 			}
 		case err := <-a.errorChan:

@@ -49,7 +49,7 @@ var _ = Describe("App", func() {
 				Whitelist:            whitelist,
 			},
 			processors,
-			sender,
+			[]metrics.Sender{sender},
 		)
 		app.eventFetcher = fetcher
 		app.appEventChan = appEventChan
@@ -111,11 +111,11 @@ var _ = Describe("App", func() {
 				return sender.GaugeCallCount()
 			}).Should(Equal(2))
 
-            actualMetric1 := sender.GaugeArgsForCall(0)
-            Expect(actualMetric1).To(Equal(*metric1))
+			actualMetric1 := sender.GaugeArgsForCall(0)
+			Expect(actualMetric1).To(Equal(*metric1))
 
-            actualMetric2 := sender.GaugeArgsForCall(1)
-            Expect(actualMetric2).To(Equal(*metric2))
+			actualMetric2 := sender.GaugeArgsForCall(1)
+			Expect(actualMetric2).To(Equal(*metric2))
 		}, 3)
 
 		It("should handle metrics sending errors", func() {
