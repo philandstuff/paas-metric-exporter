@@ -1,7 +1,9 @@
 package app
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/alphagov/paas-metric-exporter/processors"
 	cfclient "github.com/cloudfoundry-community/go-cfclient"
 	sonde_events "github.com/cloudfoundry/sonde-go/events"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Config is the application configuration
@@ -18,6 +21,8 @@ type Config struct {
 	CFAppUpdateFrequency time.Duration
 	Whitelist            []string
 	Template             string
+	EnablePrometheus     bool
+	PrometheusPort       int
 }
 
 // Application is the main application logic
@@ -78,6 +83,10 @@ func (a *Application) Run() {
 	log.Println("Starting")
 	go a.runEventFetcher()
 
+	if a.config.EnablePrometheus {
+		go a.runPrometheusServer()
+	}
+
 	for {
 		select {
 		case appEvent := <-a.appEventChan:
@@ -124,4 +133,10 @@ func (a *Application) runEventFetcher() {
 	if err != nil {
 		log.Fatalf("fetching events failed: %v\n", err)
 	}
+}
+
+func (a *Application) runPrometheusServer() {
+	http.Handle("/metrics", promhttp.Handler())
+	log.Printf("Starting prometheus server on port %d\n", a.config.PrometheusPort)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", a.config.PrometheusPort), nil))
 }
