@@ -38,8 +38,32 @@ var _ = Describe("PrometheusSender", func() {
             Expect(family.GetName()).To(Equal("counter_incremented_once"))
             Expect(metric.GetValue()).To(Equal(float64(1)))
 
-            Expect(labels[0].GetName()).To(Equal("App"))
+            Expect(labels[0].GetName()).To(Equal("app"))
             Expect(labels[0].GetValue()).To(Equal("some_value"))
+        })
+
+        It("presents metric names and label names as snake case", func() {
+            families := captureMetrics(func () {
+                sender.Incr(CounterMetric{
+                    Metric: "fooBarBaz",
+                    Value: 1,
+                    App: "shouldNotBeChanged",
+                    CellId: "cell_id_value",
+                    GUID: "guid_value",
+                })
+            })
+
+            family := families[0]
+            metrics := family.GetMetric()
+            labels := metrics[0].GetLabel()
+
+            Expect(family.GetName()).To(Equal("foo_bar_baz"))
+
+            Expect(labels[0].GetName()).To(Equal("app"))
+            Expect(labels[1].GetName()).To(Equal("cell_id"))
+            Expect(labels[2].GetName()).To(Equal("guid"))
+
+            Expect(labels[0].GetValue()).To(Equal("shouldNotBeChanged"))
         })
 
         It("does not error when called multiple times", func() {
@@ -77,7 +101,7 @@ var _ = Describe("PrometheusSender", func() {
             labels := metrics[0].GetLabel()
             metadata := labels[len(labels) - 1]
 
-            Expect(metadata.GetName()).To(Equal("statusRange"))
+            Expect(metadata.GetName()).To(Equal("status_range"))
             Expect(metadata.GetValue()).To(Equal("2xx"))
         })
     })

@@ -7,9 +7,11 @@ import (
 
 	"github.com/alphagov/paas-metric-exporter/metrics"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/alphagov/paas-metric-exporter/presenters"
 )
 
 type PrometheusSender struct {
+    presenter     presenters.SnakeCasePresenter
 	counterVecs   map[string]prometheus.CounterVec
 	gaugeVecs     map[string]prometheus.GaugeVec
 	histogramVecs map[string]prometheus.HistogramVec
@@ -18,11 +20,14 @@ type PrometheusSender struct {
 var _ metrics.Sender = &PrometheusSender{}
 
 func NewPrometheusSender() *PrometheusSender {
+    presenter := presenters.NewSnakeCasePresenter()
+
 	counterVecs := make(map[string]prometheus.CounterVec)
 	gaugeVecs := make(map[string]prometheus.GaugeVec)
 	histogramVecs := make(map[string]prometheus.HistogramVec)
 
 	return &PrometheusSender{
+        presenter,
 		counterVecs,
 		gaugeVecs,
 		histogramVecs,
@@ -30,15 +35,17 @@ func NewPrometheusSender() *PrometheusSender {
 }
 
 func (s *PrometheusSender) Gauge(metric metrics.GaugeMetric) error {
-	gaugeVec, present := s.gaugeVecs[metric.Name()]
-	labelNames := buildLabelsFromMetric(metric)
+    name := s.presenter.Present(metric.Name())
+
+	gaugeVec, present := s.gaugeVecs[name]
+	labelNames := s.buildLabelsFromMetric(metric)
 
 	if !present {
-		options := prometheus.GaugeOpts{Name: metric.Name(), Help: " "}
+		options := prometheus.GaugeOpts{Name: name, Help: " "}
 		gaugeVec = *prometheus.NewGaugeVec(options, labelNames)
 
 		prometheus.MustRegister(gaugeVec)
-		s.gaugeVecs[metric.Name()] = gaugeVec
+		s.gaugeVecs[name] = gaugeVec
 	}
 
 	labels := s.labels(metric, labelNames)
@@ -50,15 +57,17 @@ func (s *PrometheusSender) Gauge(metric metrics.GaugeMetric) error {
 }
 
 func (s *PrometheusSender) Incr(metric metrics.CounterMetric) error {
-	counterVec, present := s.counterVecs[metric.Name()]
-	labelNames := buildLabelsFromMetric(metric)
+    name := s.presenter.Present(metric.Name())
+
+	counterVec, present := s.counterVecs[name]
+	labelNames := s.buildLabelsFromMetric(metric)
 
 	if !present {
-		options := prometheus.CounterOpts{Name: metric.Name(), Help: " "}
+		options := prometheus.CounterOpts{Name: name, Help: " "}
 		counterVec = *prometheus.NewCounterVec(options, labelNames)
 
 		prometheus.MustRegister(counterVec)
-		s.counterVecs[metric.Name()] = counterVec
+		s.counterVecs[name] = counterVec
 	}
 
 	labels := s.labels(metric, labelNames)
@@ -70,15 +79,17 @@ func (s *PrometheusSender) Incr(metric metrics.CounterMetric) error {
 }
 
 func (s *PrometheusSender) PrecisionTiming(metric metrics.PrecisionTimingMetric) error {
-	histogramVec, present := s.histogramVecs[metric.Name()]
-	labelNames := buildLabelsFromMetric(metric)
+    name := s.presenter.Present(metric.Name())
+
+	histogramVec, present := s.histogramVecs[name]
+	labelNames := s.buildLabelsFromMetric(metric)
 
 	if !present {
-		options := prometheus.HistogramOpts{Name: metric.Name(), Help: " "}
+		options := prometheus.HistogramOpts{Name: name, Help: " "}
 		histogramVec = *prometheus.NewHistogramVec(options, labelNames)
 
 		prometheus.MustRegister(histogramVec)
-		s.histogramVecs[metric.Name()] = histogramVec
+		s.histogramVecs[name] = histogramVec
 	}
 
 	labels := s.labels(metric, labelNames)
@@ -94,32 +105,36 @@ func (s *PrometheusSender) labels(metric metrics.Metric, labelNames []string) pr
 	fields := structs.Map(metric)
 
 	for mk, mv := range metric.GetMetadata() {
-		fields[mk] = mv
+        presented := s.presenter.Present(mk)
+		fields[presented] = mv
 	}
 
 	for k, v := range fields {
+        presented := s.presenter.Present(k)
+
 		for _, n := range labelNames {
-			if k == n {
-				labels[k] = v.(string)
+			if presented == n {
+				labels[presented] = v.(string)
 			}
 		}
 	}
 
 	return labels
 }
-func buildLabelsFromMetric(metric metrics.Metric) (labelNames []string) {
+func (s *PrometheusSender) buildLabelsFromMetric(metric metrics.Metric) (labelNames []string) {
 	labelNames = append(labelNames,
-		"App",
-		"CellId",
-		"GUID",
-		"Instance",
-		"Job",
-		"Organisation",
-		"Space",
+		"app",
+		"cell_id",
+		"guid",
+		"instance",
+		"job",
+		"organisation",
+		"space",
 	)
 
 	for k := range metric.GetMetadata() {
-		labelNames = append(labelNames, k)
+        presented := s.presenter.Present(k)
+		labelNames = append(labelNames, presented)
 	}
 
 	return labelNames
